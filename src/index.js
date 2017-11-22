@@ -1,22 +1,23 @@
 // @flow
 import { join } from 'path'
 import { writeFileSync } from 'fs'
-import { sortAssets, getAssetsByType } from './utils'
+import { sortAssets, getAssetsByType, getSriAssets } from './utils'
 
 type Options = {
-  path: string
+  path: string,
+  sri: boolean,
 }
 
 const defaultPath = join(process.cwd(), 'assets.json')
 
 /**
- * Save assets by type (js, css)
+ * Save assets by type (js, css) and sri
  */
 class AssetsByTypePlugin {
   options: Options;
 
-  constructor({ path = defaultPath }: Options = {}) {
-    this.options = { path }
+  constructor({ path = defaultPath, sri }: Options = {}) {
+    this.options = { path, sri }
   }
 
   apply(compiler: any) {
@@ -26,6 +27,9 @@ class AssetsByTypePlugin {
       const assetsByType = {
         js: getAssetsByType(assets, 'js', output.publicPath),
         css: getAssetsByType(assets, 'css', output.publicPath),
+        ...(this.options.sri ? {
+          sri: getSriAssets(assets, stats.compilation.assets, output.publicPath),
+        } : {}),
       }
 
       writeFileSync(this.options.path, JSON.stringify(assetsByType))

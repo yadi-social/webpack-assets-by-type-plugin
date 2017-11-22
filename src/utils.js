@@ -2,6 +2,8 @@
 import sortChunks from 'webpack-sort-chunks'
 import flatten from 'lodash/flatten'
 import flatMap from 'lodash/flatMap'
+import zipObject from 'lodash/zipObject'
+import get from 'lodash/get'
 
 type Chunk = {
   files: string[],
@@ -10,6 +12,10 @@ type Chunk = {
 type Stats = {
   chunks: Chunk[],
   assetsByChunkName: { [string]: string | string[] },
+}
+
+type SrcAssets = {
+  [key: string]: string,
 }
 
 export const sortAssets = (stats: Stats): string[] => {
@@ -28,3 +34,16 @@ export const getAssetsByType = (
   [].concat(assets)
     .filter(p => (new RegExp(`${type}$`).test(p)))
     .map(p => prependPath + p)
+
+export const getSriAssets = (
+  assets: string[],
+  compilationAssets: Object,
+  prependPath?: string = ''
+): SrcAssets => {
+  const integrity = [].concat(assets).map((asset) => {
+    const source = get(compilationAssets, `${asset}`)
+    return get(source, 'integrity')
+  })
+  const sriAssets = zipObject(assets.map(p => prependPath + p), integrity)
+  return sriAssets
+}

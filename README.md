@@ -2,7 +2,8 @@
 
 [![Generated with nod](https://img.shields.io/badge/generator-nod-2196F3.svg?style=flat-square)](https://github.com/diegohaz/nod)
 [![NPM version](https://img.shields.io/npm/v/webpack-assets-by-type-plugin.svg?style=flat-square)](https://npmjs.org/package/webpack-assets-by-type-plugin)
-[![Build Status](https://img.shields.io/travis/diegohaz/webpack-assets-by-type-plugin/master.svg?style=flat-square)](https://travis-ci.org/diegohaz/webpack-assets-by-type-plugin) [![Coverage Status](https://img.shields.io/codecov/c/github/diegohaz/webpack-assets-by-type-plugin/master.svg?style=flat-square)](https://codecov.io/gh/diegohaz/webpack-assets-by-type-plugin/branch/master)
+[![Build Status](https://img.shields.io/travis/diegohaz/webpack-assets-by-type-plugin/master.svg?style=flat-square)](https://travis-ci.org/diegohaz/webpack-assets-by-type-plugin)
+[![Coverage Status](https://img.shields.io/codecov/c/github/diegohaz/webpack-assets-by-type-plugin/master.svg?style=flat-square)](https://codecov.io/gh/diegohaz/webpack-assets-by-type-plugin/branch/master)
 
 A webpack plugin that save assets by type (`js`,`css`)
 
@@ -20,6 +21,7 @@ const config = {
   plugins: [
     new AssetsByTypePlugin({
       path: path.join(process.cwd(), 'assets.json') // default
+      sri: true // default: "false"
     })
   ]
 }
@@ -28,7 +30,15 @@ const config = {
 Output:
 
 ```json
-{"js":["vendor.js", "main.js"],"css":["styles.css"]}
+{
+  "js": ["vendor.js", "main.js"],
+  "css": ["styles.css"],
+  "sri": {
+    "vendor.js": "sha256-...",
+    "main.js": "sha256-...",
+    "styles.css": "sha256-..."
+  }
+}
 ```
 
 ## API
@@ -37,7 +47,7 @@ Output:
 
 ### AssetsByTypePlugin
 
-Save assets by type (js, css)
+Save assets by type (js, css) and sri
 
 ## License
 
